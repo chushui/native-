@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <jni.h>
 #include <android/log.h>
+#include "malloc.h"
 
 typedef int (*my_log_t)(int prio, const char* tag, const char* fmt, ...);
 my_log_t my_global_log_ptr = (my_log_t)__android_log_print;
@@ -20,7 +21,11 @@ static void *new_thread_func(void *arg)
         my_local_log_ptr(ANDROID_LOG_DEBUG, "mytest", "call from local ptr. %u\n", i);
         my_local_log_ptr2(ANDROID_LOG_DEBUG, "mytest", "call from local ptr2. %u (definitely failed when compiled with -O0)\n", i);
         i++;
-        sleep(1);
+        int* p;
+        p = (int *) malloc (15);
+        p = (int *) realloc (p, 30);
+        free(p);
+        sleep(5);
     }
     
     return NULL;
